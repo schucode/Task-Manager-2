@@ -13,9 +13,7 @@ class TM::Client
     TM::DB.create_project(name)
   end
 
-  def self.show_some_project(id)
-    TM::DB.get_project(id)
-  end
+  def 
 
   def self.delete_some_project(id)
     TM::DB.delete_project(id)
@@ -36,7 +34,6 @@ class TM::Client
     puts "  create P - Create a project named P"
     puts "  delete P - Delete a project named P"
     puts "  show P - Show tasks that have not been completed in project P"
-    
     puts "  history P - Show task that have been completed in Project P"
     puts "  add P PRI D - add a task to project P with priority PRI and description D"
     puts "  finish T - Make task T as completed"
@@ -65,7 +62,7 @@ class TM::Client
     when "delete"
       self.delete_some_project(input[1])
     when "show"
-      self.show_some_project(input[1])
+      self.show_some_proect(input[1])
 
     when "show" 
       puts "Here are the remaining tasks for project with id #{input[1]}"

@@ -17,8 +17,12 @@ class TM::DB #manages database
     @@db.exec(command)
   end
 
-  #def self.get_project(data)
-  #end
+  def self.get_project(id)
+    command = <<-sQL
+      SELECT * FROM tasks WHERE project_id='#{id}' AND done_status='false';
+    sQL
+    @@db.exec(command)
+  end
 
   # def self.update_project(id, data)
   # end
@@ -68,7 +72,10 @@ end
 # PRIMARY KEY (id)
 
 
-
+# SELECT * FROM users WHERE id=2;
+# SELECT * FROM users WHERE email='sally@computeruser.com';
+# SELECT * FROM users LIMIT 2;
+# SELECT * FROM users ORDER BY name;
 
 
 
