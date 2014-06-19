@@ -13,33 +13,36 @@ class TM::Client
     TM::DB.create_project(name)
   end
 
-  def self.show_some_project(id)
-    TM::DB.get_project(id)
-  end
-
   def self.delete_some_project(id)
     TM::DB.delete_project(id)
   end 
 
-  def self.create_some_task(project_id, priority, description) 
-    t = Time.now
-    TM::DB.create_task(project_id, priority, description, t.to_s)
+  def self.show_some_project(id)
+    return TM::DB.show_project(id)
   end
 
-  def self.finished_task(task_id) 
-  
+  def self.add_some_task(project_id, priority, description) 
+    t = Time.now
+    TM::DB.add_task(project_id, priority, description, t.to_s)
+  end
+
+  def self.get_some_task(id)
+    return TM::DB.get_task(id)
+  end
+
+  def self.update_some_task(id)
+    TM::DB.update_task(id)
   end
 
   def self.help
     puts ""
     puts "  help - Show these commands again"
     puts "  create P - Create a project named P"
-    puts "  delete P - Delete a project named P"
-    puts "  show P - Show tasks that have not been completed in project P"
-    
-    puts "  history P - Show task that have been completed in Project P"
+    puts "  delete ID - Delete a project with ID"
+    puts "  show ID - Show tasks that have not been completed in project with ID"
     puts "  add P PRI D - add a task to project P with priority PRI and description D"
-    puts "  finish T - Make task T as completed"
+    puts "  get ID - Get and show data for task with ID"
+    puts "  update ID - Update task with ID to complete"
     puts ""
   end
 
@@ -58,31 +61,33 @@ class TM::Client
     input = user_input.split
 
     case input[0]
-    when "help"
 
+    when "help"
     when "create"
       self.create_some_project(input[1])
     when "delete"
       self.delete_some_project(input[1])
     when "show"
-      self.show_some_project(input[1])
-
-    when "show" 
-      puts "Here are the remaining tasks for project with id #{input[1]}"
-      project_id = input[1].to_i
-      self.show_incomplete(project_id)
-    when "history"
-      puts "Here are the completed tasks for the project with id #{input[1]}"
-      project_id = input[1].to_i
-      self.show_completed(prject_id)
+      result = self.show_some_project(input[1])
+      result.each do |i| # i is a hash
+        i.each do |key, value| 
+        puts "#{key}, #{value}"
+        end
+        puts ""
+      end
     when "add" 
       project = input[1].to_i
       priority = input[2].to_i
       description = input[3]
       self.create_some_task(project, priority, description)
-    when "finish"
-      task = input[1].to_i
-      finished_task(task)
+    when "get"
+      result = self.get_some_task(input[1])
+      result[0].each do |key, value| 
+        puts "#{key}, #{value}"
+      end
+      puts ""
+    when "update"
+      self.update_some_task(input[1])
     else
       puts "not a command"
     end

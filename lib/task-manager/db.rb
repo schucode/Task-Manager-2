@@ -15,17 +15,8 @@ class TM::DB #manages database
       INSERT INTO projects(name) VALUES ('#{name}')
     sQL
     @@db.exec(command)
+    return "success"
   end
-
-  def self.get_project(id)
-    command = <<-sQL
-      SELECT * FROM tasks WHERE project_id='#{id}' AND done_status='false';
-    sQL
-    @@db.exec(command)
-  end
-
-  # def self.update_project(id, data)
-  # end
 
   def self.delete_project(id)
     command = <<-sQL
@@ -34,10 +25,22 @@ class TM::DB #manages database
     @@db.exec(command)
   end
 
+  def self.show_project(id)
+    command = <<-sQL
+      SELECT * FROM tasks WHERE project_id='#{id}' AND done_status='false';
+    sQL
+    return @@db.exec(command)
+  end
+
+  # def self.update_project(id, data)
+  # end
+
+  
+
           # TASKS
 
 
-  def self.create_task(project_id, priority, description, time)
+  def self.add_task(project_id, priority, description, time)
     command = <<-sQL
       INSERT INTO tasks(project_id, priority, description, creation_time)
       VALUES ('#{project_id}', '#{priority}', '#{description}', '#{time}')
@@ -45,11 +48,18 @@ class TM::DB #manages database
     @@db.exec(command)
   end
 
-  # def self.get_task(id)
-  # end
+  def self.get_task(id)
+    command = <<-sQL 
+      SELECT * FROM tasks WHERE id='#{id}'
+    sQL
+    return @@db.exec(command)
+  end
 
-  # def self.update_task(id, data)
-  # end
+  def self.update_task(id)
+    command = <<-sQL
+      UPDATE tasks SET done_status = true WHERE id='#{id}'
+    sQL
+  end
 
   # def self.delete_task(id)
   # end
