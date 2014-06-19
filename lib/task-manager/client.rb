@@ -34,6 +34,10 @@ class TM::Client
     TM::DB.update_task(id)
   end
 
+  def self.delete_some_task(id)
+    TM::DB.delete_task(id)
+  end
+
   def self.help
     puts ""
     puts "  help - Show these commands again"
@@ -42,7 +46,8 @@ class TM::Client
     puts "  show ID - Show tasks that have not been completed in project with ID"
     puts "  add P PRI D - add a task to project P with priority PRI and description D"
     puts "  get ID - Get and show data for task with ID"
-    puts "  update ID - Update task with ID to complete"
+    puts "  update ID - Update task with ID to completed status"
+    puts "  deltask ID - Delete task with ID"
     puts ""
   end
 
@@ -88,6 +93,8 @@ class TM::Client
       puts ""
     when "update"
       self.update_some_task(input[1])
+    when "deltask"
+      self.delete_some_task(input[1])
     else
       puts "not a command"
     end
