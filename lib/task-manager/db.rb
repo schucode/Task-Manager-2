@@ -65,53 +65,43 @@ class TM::DB #manages database
   end
 
   def self.assign_task(task_id, employee_id)
-    project = <<-sQL
+    get_task_project_id = <<-sQL
       SELECT project_id FROM tasks WHERE id='#{task_id}';
     sQL
-    # project[0] => {"project_id"=>"#"}
-    # project[0][project_id]
-    query2 = <<-sQL
-      SELECT project_id FROM employees WHERE id=3;
+
+    task_project_id = get_task_project_id[0]['project_id']
+
+    get_employee_project_id = <<-sQL
+      SELECT project_id FROM employees WHERE id='#{employee_id}';
     sQL
 
-    # if the employee is assigned to the project 
-    # that the task is assigned to
+    employee_project_id = get_employee_project_id[0]['project_id']
 
+    if task_project_id == employee_project_id
+      command = <<-sQL
+        UPDATE tasks SET employee_id='#{employee_id}' WHERE id='#{task_id}'
+      sQL
+      @@db.exec(command)
+    end
+  end
+
+  def self.update_task(task_id)
     command = <<-sQL
-      UPDATE tasks SET employee_id='#{employee_id}' WHERE id='#{task_id}'
+      UPDATE tasks SET done_status = true WHERE id='#{task_id}'
     sQL
     @@db.exec(command)
   end
 
+          # EMPLOYEES
 
-
-
-
-
-  def self.get_task(id)
-    command = <<-sQL 
-      SELECT * FROM tasks WHERE id='#{id}'
+  def self.show_employee_list
+    command = <<-sQL
+      SELECT * FROM employees
     sQL
     return @@db.exec(command)
   end
 
-  def self.update_task(id)
-    command = <<-sQL
-      UPDATE tasks SET done_status = true WHERE id='#{id}'
-    sQL
-    @@db.exec(command)
-  end
-
-  def self.delete_task(id)
-    command = <<-sQL
-      DELETE FROM tasks WHERE id='#{id}'
-    sQL
-    @@db.exec(command)
-  end
-
-          # EMPLOYEES 
-
-  def self.add_employees(name)
+  def self.create_employee(name)
     command = <<-sQL
       INSERT INTO employees(name)
       VALUES ('#{name}')
@@ -119,27 +109,28 @@ class TM::DB #manages database
     @@db.exec(command)
   end
 
-  # def self.get_employee(id)
-  #   command = <<-sQL 
-  #     SELECT * FROM tasks WHERE id='#{id}'
-  #   sQL
-  #   return @@db.exec(command)
-  # end
+  def self.show_employee(employee_id)
+    command = <<-sQL 
+      SELECT * FROM employees WHERE id='#{employee_id}'
+    sQL
+    return @@db.exec(command)
+  end
 
-  # def self.update_employee(id)
-  #   command = <<-sQL
-  #     UPDATE tasks SET done_status = true WHERE id='#{id}'
-  #   sQL
-  #   @@db.exec(command)
-  # end
+  def self.show_emp_details(employee_id)
+    command = <<-sQL 
+      SELECT * FROM tasks WHERE employee_id='#{employee_id}'
+      AND done_status='false'
+    sQL
+    return @@db.exec(command)
+  end
 
-  # def self.delete_task(id)
-  #   command = <<-sQL
-  #     DELETE FROM tasks WHERE id='#{id}'
-  #   sQL
-  #   @@db.exec(command)
-  # end
-
+  def self.show_emp_history(employee_id)
+    command = <<-sQL 
+      SELECT * FROM tasks WHERE employee_id='#{employee_id}'
+      AND done_status='true'
+    sQL
+    return @@db.exec(command)
+  end 
 end
 
 # X help - Show these commands again
@@ -151,15 +142,15 @@ end
 # X project recruit PID EID - Adds employee EID to participate in project PID
 
 # X task create PID PRIORITY DESC - Add a new task to project PID
-#   task assign TID EID - Assign task to employee
-#   task mark TID - Mark task TID as complete
+# X task assign TID EID - Assign task to employee
+# X task mark TID - Mark task TID as complete
 
-#   emp list - List all employees
-#   emp create NAME - Create a new employee
-#   emp show EID - Show employee EID and all participating projects
-#   emp details EID - Show all remaining tasks assigned to employee EID,
+# X emp list - List all employees
+# X emp create NAME - Create a new employee
+# X emp show EID - Show employee EID and all participating projects
+# X emp details EID - Show all remaining tasks assigned to employee EID,
 #                     along with the project name next to each task
-#   emp history EID - Show completed tasks for employee with id=EID
+# X emp history EID - Show completed tasks for employee with id=EID
 
 
 
@@ -177,12 +168,10 @@ end
 # PRIMARY KEY (id)
 
 
-
 # Tasks Data Model
 
 # id SERIAL
 # project_id integer
-
 # priority integer
 # description text
 # done_status text DEFAULT false 
@@ -198,11 +187,6 @@ end
 # Multiple employees can participate in a single project
 # Tasks can be assigned to an employee
 # The employee must be participating in that project
-
-# SELECT * FROM users WHERE id=2;
-# SELECT * FROM users WHERE email='sally@computeruser.com';
-# SELECT * FROM users LIMIT 2;
-# SELECT * FROM users ORDER BY name;
 
 
 

@@ -42,20 +42,28 @@ class TM::Client
     TM::DB.assign_task(task_id, employee_id)
   end
 
-
-
-
-
-  def self.get_some_task(id)
-    return TM::DB.get_task(id)
+  def self.update_some_task(task_id)
+    TM::DB.update_task(task_id)
   end
 
-  def self.update_some_task(id)
-    TM::DB.update_task(id)
+  def self.list_employees
+    return TM::DB.show_employee_list
   end
 
-  def self.delete_some_task(id)
-    TM::DB.delete_task(id)
+  def self.create_some_employee(name)
+    TM::DB.create_employee(name)
+  end
+
+  def self.show_some_employee(employee_id)
+    return TM::DB.show_employee(employee_id)
+  end
+
+  def self.show_some_emp_details(employee_id)
+    return TM::DB.show_emp_details(employee_id)
+  end
+
+  def self.history_of_emp(employee_id)
+    return TM::DB.show_emp_history(employee_id)
   end
 
   def self.help
@@ -70,11 +78,12 @@ class TM::Client
     puts "  project_recruit PID EID - Add employee EID to project PID"
     puts "  task_create PID PRIORITY DESC - add a task to project PID, give it a PRIORITY, and a DESCription"
     puts "  task_assign TID EID - Assign task TID to employee EID"
-
-
-    puts "  get ID - Get and show data for task with ID"
-    puts "  update ID - Update task with ID to completed status"
-    puts "  deltask ID - Delete task with ID"
+    puts "  task_mark TID - Mark task as complete"
+    puts "  emp_list - List all employees"
+    puts "  emp_create NAME - Create an employee profile"
+    puts "  emp_show EID - Show employee and their project" 
+    puts "  emp_details EID - Show remaining tasks on project"
+    puts "  emp_history EID - Show completed tasks for employee"
     puts ""
   end
 
@@ -112,7 +121,7 @@ class TM::Client
       puts ""
       result.each do |i| # i is a hash
         i.each do |key, value| 
-        puts "#{key}, #{value}"
+        puts "#{key}: #{value}"
         end
         puts ""
       end
@@ -121,7 +130,7 @@ class TM::Client
       puts ""
       result.each do |i| # i is a hash
         i.each do |key, value| 
-        puts "#{key}, #{value}"
+        puts "#{key}: #{value}"
         end
         puts ""
       end
@@ -130,7 +139,7 @@ class TM::Client
       puts ""
       result.each do |i| # i is a hash
         i.each do |key, value| 
-        puts "#{key}, #{value}"
+        puts "#{key}: #{value}"
         end
         puts ""
       end
@@ -143,20 +152,53 @@ class TM::Client
       priority = input[2].to_i
       description = input[3]
       self.create_some_task(project, priority, description)
-    when ""
+    when "task_assign"
       task_id = input[1].to_i
       employee_id = input[2].to_i
       self.assign_some_task(task_id, employee_id)
-    # when "get"
-    #   result = self.get_some_task(input[1])
-    #   result[0].each do |key, value| 
-    #     puts "#{key}, #{value}"
-    #   end
-    #   puts ""
-    # when "update"
-    #   self.update_some_task(input[1])
-    # when "deltask"
-    #   self.delete_some_task(input[1])
+    when "task_mark"
+      self.update_some_task(input[1])
+    when "emp_list"
+      result = self.list_employees
+      puts ""
+      result.each do |i| # i is a hash
+        i.each do |key, value| 
+        puts "#{key}: #{value}"
+        end
+        puts ""
+      end
+    when "emp_create"
+      self.create_some_employee(input[1])
+    when "emp_show"
+      employee_id = input[1].to_i
+      result = self.show_some_employee(employee_id)
+      puts ""
+      result.each do |i| # i is a hash
+        i.each do |key, value| 
+        puts "#{key}: #{value}"
+        end
+        puts ""
+      end
+    when "emp_details"
+      employee_id = input[1].to_i
+      result = self.show_some_emp_details(employee_id)
+      puts ""
+      result.each do |i| # i is a hash
+        i.each do |key, value| 
+        puts "#{key}: #{value}"
+        end
+        puts ""
+      end 
+    when "emp_history"
+      employee_id = input[1].to_i
+      result = self.history_of_emp(employee_id)
+      puts ""
+      result.each do |i| # i is a hash
+        i.each do |key, value| 
+        puts "#{key}: #{value}"
+        end
+        puts ""
+      end 
     else
       puts "not a command"
     end
